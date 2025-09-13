@@ -2,6 +2,7 @@
 This drone is designed to fly and survey, collect images with GPS locations and convert them into maps that can be viewed on the web.
 
 ## Image-Stitcher 📷
+>All captured images will be saved in one of the directories (can be selected by editing the settings in the source code). The images will then be imported and stitched together into a map using the cv2 library with the Stitcher function.
 ``` python
 import cv2
 import os
