@@ -1,4 +1,4 @@
-# RemotexyDroneGis
+# GIS-Drone
 This is a drone controller using a bluetooth module.
 
 ## manual
