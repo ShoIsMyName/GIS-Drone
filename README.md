@@ -73,7 +73,7 @@ else:
 ```
 
 
-# Remote by "Remotexy"
+# Remote by "Remotexy" 🎮
 This is a drone controller using a bluetooth module.
 
 
