@@ -1,6 +1,10 @@
 # GIS-Drone
 This drone is designed to fly and survey, collect images with GPS locations and convert them into maps that can be viewed on the web.
 
+## Structure
+<img src="https://github.com/ShoIsMyName/GIS-Drone/blob/main/GisDroneBodyFirstLayer.png?raw=true" style="width: 80%">
+<img src="https://github.com/ShoIsMyName/GIS-Drone/blob/main/GisDroneBodySecondLayer.png?raw=true" style="width: 80%">
+
 ## Image-Stitcher 📷
 >All captured images will be saved in one of the directories (can be selected by editing the settings in the source code). The images will then be imported and stitched together into a map using the cv2 library with the Stitcher function.
 ``` python
