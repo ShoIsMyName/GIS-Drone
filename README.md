@@ -135,18 +135,16 @@ This is a drone controller using a bluetooth module.
 #define REMOTEXY_SERIAL_RX 2
 #define REMOTEXY_SERIAL_TX 3
 #define REMOTEXY_SERIAL_SPEED 9600
-#define REMOTEXY_ACCESS_PASSWORD "12345678"
 
 
 #include <RemoteXY.h>
 
 // RemoteXY GUI configuration  
 #pragma pack(push, 1)  
-uint8_t RemoteXY_CONF[] =   // 64 bytes
-  { 255,4,0,0,0,57,0,19,0,0,0,71,105,115,68,114,111,110,101,0,
-  8,1,200,84,1,1,4,0,5,19,17,55,55,0,39,8,31,5,130,15,
-  56,56,0,193,8,31,129,43,3,8,12,64,16,88,0,129,153,2,8,12,
-  64,16,89,0 };
+uint8_t RemoteXY_CONF[] =   // 48 bytes
+  { 255,4,0,0,0,41,0,19,0,0,0,0,8,2,106,200,200,84,1,1,
+  2,0,5,207,12,143,143,19,25,52,52,0,8,16,31,5,219,64,124,124,
+  129,26,52,52,0,8,16,31 };
   
 // this structure defines all the variables and events of your control interface 
 struct {
