@@ -85,18 +85,18 @@ else:
 This is a drone controller using a bluetooth module.
 
 
-## manual
-1. Download the source code for board, open it in the Arduino IDE.
-
-2. Install the RemoteXY library for Arduino IDE.
-
-3. Compile the source code and upload it to the board using the Arduino IDE.
-
-4. Correctly connect HC-05(06) Bluetooth module to the board.
-
-5. Install the mobile app RemoteXY to your phone or tablet.
-
-6. Connect to board using mobile app.
+> ## manual
+> 1. Download the source code for board, open it in the Arduino IDE.
+> 
+> 2. Install the RemoteXY library for Arduino IDE.
+> 
+> 3. Compile the source code and upload it to the board using the Arduino IDE.
+> 
+> 4. Correctly connect HC-05(06) Bluetooth module to the board.
+> 
+> 5. Install the mobile app RemoteXY to your phone or tablet.
+> 
+> 6. Connect to board using mobile app.
 
 
 ## Controller
