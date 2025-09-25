@@ -6,8 +6,8 @@ This drone is designed to fly and survey, collect images with GPS locations and 
 <img src="https://github.com/ShoIsMyName/GIS-Drone/blob/main/GisDroneBodySecondLayer.png?raw=true" style="width: 80%">
 
 ## Arduino code
-<i src="https://github.com/ShoIsMyName/GIS-Drone/blob/main/arduino.ino" style="font-size:30px;">Arduino R3 SMD</i>
-<i src="https://github.com/ShoIsMyName/GIS-Drone/blob/main/Esp32.ino" style="font-size:30px;">Esp32</i>
+<a src="https://github.com/ShoIsMyName/GIS-Drone/blob/main/arduino.ino" style="font-size:30px;">Arduino R3 SMD</a>
+<a src="https://github.com/ShoIsMyName/GIS-Drone/blob/main/Esp32.ino" style="font-size:30px;">Esp32</a>
 
 ## Image-Stitcher 📷
 >All captured images will be saved in one of the directories (can be selected by editing the settings in the source code). The images will then be imported and stitched together into a map using the cv2 library with the Stitcher function.
