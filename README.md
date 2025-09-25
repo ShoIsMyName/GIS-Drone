@@ -159,3 +159,111 @@ void loop()
 
 }
 ```
+
+
+## สำรองนะ
+
+``` c++
+#include <Servo.h>
+#include <Wire.h>
+#include <MPU6050_light.h>
+
+Servo esc1, esc2, esc3, esc4;
+MPU6050 mpu(Wire);
+
+int j1x, j1y, j2x, j2y;
+unsigned long timer = 0;
+
+void setup() {
+  Serial.begin(9600);
+  Wire.begin();
+
+  // ====== เริ่มต้น MPU6050 ======
+  byte status = mpu.begin();
+  if (status != 0) {
+    Serial.print("MPU6050 error: ");
+    Serial.println(status);
+    while (1); // ถ้าต่อไม่ถูก ให้หยุด
+  }
+  Serial.println("Calibrating MPU...");
+  delay(2000);
+  mpu.calcOffsets(); // คาลิเบรต IMU
+  Serial.println("MPU Ready!");
+
+  // ====== เริ่มต้น ESC ======
+  esc1.attach(4);
+  esc2.attach(5);
+  esc3.attach(6);
+  esc4.attach(7);
+
+  esc1.writeMicroseconds(1000);
+  esc2.writeMicroseconds(1000);
+  esc3.writeMicroseconds(1000);
+  esc4.writeMicroseconds(1000);
+  delay(3000); // รอ ESC arm
+}
+
+
+
+
+void loop() {
+  // ====== อ่านค่า IMU ======
+  mpu.update();
+  if (millis() - timer > 20) { // ทุก 20 ms
+    timer = millis();
+    Serial.print("Pitch: "); Serial.print(mpu.getAngleX());
+    Serial.print(" | Roll: "); Serial.println(mpu.getAngleY());
+  }
+
+  // ====== อ่านค่าจาก RemoteXY ======
+  if (Serial.available() > 0) {
+    String data = Serial.readStringUntil('\n');
+    data.trim();
+
+    int c1 = data.indexOf(',');
+    int c2 = data.indexOf(',', c1 + 1);
+    int c3 = data.indexOf(',', c2 + 1);
+
+    if (c1 > 0 && c2 > 0 && c3 > 0) {
+      j1x = data.substring(0, c1).toInt();
+      j1y = data.substring(c1 + 1, c2).toInt();
+      j2x = data.substring(c2 + 1, c3).toInt();
+      j2y = data.substring(c3 + 1).toInt();
+    }
+  }
+
+  // ====== Map joystick → ESC ======
+  int esc1_val = map(j1x, 0, 255, 1000, 2000);
+  int esc2_val = map(j1y, 0, 255, 1000, 2000);
+  int esc3_val = map(j2x, 0, 255, 1000, 2000);
+  int esc4_val = map(j2y, 0, 255, 1000, 2000);
+
+  // ====== ตัวอย่างชดเชยมุม (ง่ายๆ) ======
+  // Pitch > 0 = ก้มหน้า → เพิ่มกำลังมอเตอร์หลัง (esc3, esc4)
+  float pitch = mpu.getAngleX();
+  float roll  = mpu.getAngleY();
+  int correctionPitch = pitch * 5; // ค่า gain เล็กๆ
+  int correctionRoll  = roll  * 5;
+
+  esc1_val -= correctionPitch + correctionRoll;
+  esc2_val -= correctionPitch - correctionRoll;
+  esc3_val += correctionPitch + correctionRoll;
+  esc4_val += correctionPitch - correctionRoll;
+
+  // จำกัดค่าไม่ให้เกินช่วง ESC
+  esc1_val = constrain(esc1_val, 1000, 2000);
+  esc2_val = constrain(esc2_val, 1000, 2000);
+  esc3_val = constrain(esc3_val, 1000, 2000);
+  esc4_val = constrain(esc4_val, 1000, 2000);
+
+  // ====== ส่งค่าไป ESC ======
+  esc1.writeMicroseconds(esc1_val);
+  esc2.writeMicroseconds(esc2_val);
+  esc3.writeMicroseconds(esc3_val);
+  esc4.writeMicroseconds(esc4_val);
+
+  delay(20); // หน่วงเล็กน้อยเพื่อความเสถียร
+}
+
+```
+
