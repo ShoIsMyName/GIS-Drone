@@ -3,7 +3,7 @@ This drone is designed to fly and survey, collect images with GPS locations and 
 
 ## Structure
 <img src="https://github.com/ShoIsMyName/GIS-Drone/blob/main/GisDroneBodyFirstLayer.png?raw=true" style="width: 80%">
-<img src="https://github.com/ShoIsMyName/GIS-Drone/blob/main/GisDroneBodySecondLayer.png?raw=true" style="width: 80%">
+<img src="https://github.com/ShoIsMyName/GIS-Drone/blob/main/GisDroneAllStructure.png?raw=true" style="width: 80%">
 
 ## Arduino code
 - <a href="https://github.com/ShoIsMyName/GIS-Drone/blob/main/arduino.ino" style="font-size:30px;">Arduino R3 SMD</a> <br>
