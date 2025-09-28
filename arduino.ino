@@ -1,52 +1,70 @@
 #include <Servo.h>
 
-Servo esc1, esc2, esc3, esc4;
+Servo motorFL; // Front Left
+Servo motorFR; // Front Right
+Servo motorBL; // Back Left
+Servo motorBR; // Back Right
 
-int j1x, j1y, j2x, j2y;
+String inputString = "";
+boolean stringComplete = false;
 
 void setup() {
   Serial.begin(9600);
 
-  // กำหนดขาที่ใช้ต่อ ESC (เลือก 4 ขา Digital)
-  esc1.attach(4);  // ESC1 -> D4
-  esc2.attach(5);  // ESC2 -> D5
-  esc3.attach(6);  // ESC3 -> D6
-  esc4.attach(7);  // ESC4 -> D7
+  motorFL.attach(3); // Brown
+  motorFR.attach(5); // Black
+  motorBL.attach(6); // White
+  motorBR.attach(9); // Gray
 
-  // เริ่มต้น Arm ESC (ต้องมีแบตต่อ ESC)
-  esc1.writeMicroseconds(1000);
-  esc2.writeMicroseconds(1000);
-  esc3.writeMicroseconds(1000);
-  esc4.writeMicroseconds(1000);
-  delay(3000); // รอ ESC arm ประมาณ 3 วินาที
+  inputString.reserve(50);
 }
 
 void loop() {
-  if (Serial.available() > 0) {
-    String data = Serial.readStringUntil('\n');
-    data.trim();
+  if (stringComplete) {
+    int j1x, j1y, j2x, j2y;
+    sscanf(inputString.c_str(), "%d,%d,%d,%d", &j1x, &j1y, &j2x, &j2y);
 
-    int c1 = data.indexOf(',');
-    int c2 = data.indexOf(',', c1 + 1);
-    int c3 = data.indexOf(',', c2 + 1);
+    // map ค่าจาก joystick -100..100 → 1000..2000 (PWM ESC)
+    int throttle = map(j1y, -100, 100, 1000, 2000); // ความสูง
+    int yaw      = map(j1x, -100, 100, -200, 200);  // หันซ้าย-ขวา
+    int pitch    = map(j2y, -100, 100, -200, 200);  // เดินหน้า-หลัง
+    int roll     = map(j2x, -100, 100, -200, 200);  // เอียงซ้าย-ขวา
 
-    if (c1 > 0 && c2 > 0 && c3 > 0) {
-      j1x = data.substring(0, c1).toInt();
-      j1y = data.substring(c1 + 1, c2).toInt();
-      j2x = data.substring(c2 + 1, c3).toInt();
-      j2y = data.substring(c3 + 1).toInt();
+    // คำนวณกำลังแต่ละมอเตอร์
+    int mFL = throttle + pitch - roll + yaw;
+    int mFR = throttle + pitch + roll - yaw;
+    int mBL = throttle - pitch - roll - yaw;
+    int mBR = throttle - pitch + roll + yaw;
+
+    // จำกัดค่าไม่ให้เกินช่วง 1000–2000
+    mFL = constrain(mFL, 1000, 2000);
+    mFR = constrain(mFR, 1000, 2000);
+    mBL = constrain(mBL, 1000, 2000);
+    mBR = constrain(mBR, 1000, 2000);
+
+    // ส่งค่าให้ ESC
+    motorFL.writeMicroseconds(mFL);
+    motorFR.writeMicroseconds(mFR);
+    motorBL.writeMicroseconds(mBL);
+    motorBR.writeMicroseconds(mBR);
+
+    Serial.print("FL: "); Serial.print(mFL);
+    Serial.print(" FR: "); Serial.print(mFR);
+    Serial.print(" BL: "); Serial.print(mBL);
+    Serial.print(" BR: "); Serial.println(mBR);
+
+    inputString = "";
+    stringComplete = false;
+  }
+}
+
+void serialEvent() {
+  while (Serial.available()) {
+    char inChar = (char)Serial.read();
+    if (inChar == '\n') {
+      stringComplete = true;
+    } else {
+      inputString += inChar;
     }
   }
-
-  int esc1_val = map(j1x, 0, 255, 1000, 2000);
-  int esc2_val = map(j1y, 0, 255, 1000, 2000);
-  int esc3_val = map(j2x, 0, 255, 1000, 2000);
-  int esc4_val = map(j2y, 0, 255, 1000, 2000);
-
-  esc1.writeMicroseconds(esc1_val);
-  esc2.writeMicroseconds(esc2_val);
-  esc3.writeMicroseconds(esc3_val);
-  esc4.writeMicroseconds(esc4_val);
-
-  delay(20); // หน่วงเล็กน้อยเพื่อความเสถียร
 }
