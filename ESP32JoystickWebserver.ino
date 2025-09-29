@@ -33,7 +33,6 @@ let ws = new WebSocket("ws://" + location.hostname + ":81/");
 function joystick(id, callback) {
   let canvas = document.getElementById(id);
   let ctx = canvas.getContext("2d");
-  let rect = canvas.getBoundingClientRect();
   let center = { x: canvas.width/2, y: canvas.height/2 };
   let knob = { x: center.x, y: center.y, r: 30 };
   let pressed = false;
@@ -54,19 +53,51 @@ function joystick(id, callback) {
     if (dist > max) { dx = dx/dist*max; dy = dy/dist*max; }
     knob.x = center.x + dx;
     knob.y = center.y + dy;
-    let valX = Math.round((dx/max)*90); // -90 → 90
-    let valY = Math.round((-dy/max)*90); // -90 → 90 (กลับด้าน Y)
+    let valX = Math.round((dx/max)*90);   // -90 → 90
+    let valY = Math.round((-dy/max)*90);  // -90 → 90 (กลับด้าน Y)
     callback(valX, valY);
     draw();
   }
 
-  canvas.addEventListener("mousedown", e=>{ pressed=true; setPos(e.offsetX,e.offsetY); });
-  canvas.addEventListener("mousemove", e=>{ if(pressed) setPos(e.offsetX,e.offsetY); });
-  window.addEventListener("mouseup", e=>{ pressed=false; knob.x=center.x; knob.y=center.y; callback(0,0); draw(); });
+  function getPos(evt) {
+    let rect = canvas.getBoundingClientRect();
+    let x, y;
+    if (evt.touches) { // touch
+      x = evt.touches[0].clientX - rect.left;
+      y = evt.touches[0].clientY - rect.top;
+    } else { // mouse
+      x = evt.clientX - rect.left;
+      y = evt.clientY - rect.top;
+    }
+    return {x,y};
+  }
 
-  canvas.addEventListener("touchstart", e=>{ pressed=true; let t=e.touches[0]; setPos(t.clientX-rect.left,t.clientY-rect.top); });
-  canvas.addEventListener("touchmove", e=>{ let t=e.touches[0]; if(pressed) setPos(t.clientX-rect.left,t.clientY-rect.top); });
-  canvas.addEventListener("touchend", e=>{ pressed=false; knob.x=center.x; knob.y=center.y; callback(0,0); draw(); });
+  canvas.addEventListener("mousedown", e=>{
+    pressed = true;
+    let p = getPos(e);
+    setPos(p.x,p.y);
+  });
+  canvas.addEventListener("mousemove", e=>{
+    if(pressed){ let p = getPos(e); setPos(p.x,p.y); }
+  });
+  window.addEventListener("mouseup", e=>{
+    pressed=false; knob.x=center.x; knob.y=center.y; callback(0,0); draw();
+  });
+
+  canvas.addEventListener("touchstart", e=>{
+    pressed = true;
+    let p = getPos(e);
+    setPos(p.x,p.y);
+    e.preventDefault();
+  });
+  canvas.addEventListener("touchmove", e=>{
+    if(pressed){ let p = getPos(e); setPos(p.x,p.y); }
+    e.preventDefault();
+  });
+  canvas.addEventListener("touchend", e=>{
+    pressed=false; knob.x=center.x; knob.y=center.y; callback(0,0); draw();
+    e.preventDefault();
+  });
 
   draw();
 }
@@ -77,6 +108,7 @@ joystick("joyR",(x,y)=>{ ws.send("R,"+x+","+y); });
 </body>
 </html>
 )rawliteral";
+
 
 void handleRoot() {
   server.send_P(200, "text/html", webpage);
