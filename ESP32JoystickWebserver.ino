@@ -118,11 +118,11 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
 
 void setup() {
   Serial.begin(115200);
-  Serial1.begin(9600, SERIAL_8N1, -1, 17);
+  Serial1.begin(115200, SERIAL_8N1, -1, 17);
   WiFi.softAP(ssid, password);
   server.on("/", handleRoot);
   server.begin();
-  webSocket.begin();
+  webSocket.begin();0
   webSocket.onEvent(webSocketEvent);
   Serial.println("Joystick Web ready!");
   Serial.println(WiFi.softAPIP());
@@ -133,4 +133,5 @@ void loop() {
   webSocket.loop();
 
   Serial1.printf("%d,%d,%d,%d\n", joyLX, joyLY, joyRX, joyRY);
+  delay(100);
 }
