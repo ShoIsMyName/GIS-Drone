@@ -8,7 +8,7 @@ const char* password = "12345678";
 WebServer server(80);
 WebSocketsServer webSocket = WebSocketsServer(81);  
 
-// ค่าจอยสติ๊
+// joystick value
 int joyLX = 0, joyLY = 0; // Joystick Left
 int joyRX = 0, joyRY = 0; // Joystick Right
 
